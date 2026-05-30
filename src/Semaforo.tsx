@@ -47,7 +47,6 @@ export default function Semaforo() {
     clearTimers()
     setActiveLight('yellow')
     setDirection(null)
-    setShowArrow(false)
     setWaitingForInput(false)
 
     timerRef.current = setTimeout(() => {
@@ -79,7 +78,6 @@ export default function Semaforo() {
     } else if (color === 'green') {
       setActiveLight('green')
       setDirection(null)
-      setShowArrow(false)
       setWaitingForInput(false)
 
       timerRef.current = setTimeout(() => {

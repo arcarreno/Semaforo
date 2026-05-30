@@ -128,7 +128,7 @@ export default function Semaforo() {
       )}
 
       <div className="relative">
-        <div className="bg-gray-800 rounded-3xl p-5 sm:p-6 md:p-8 flex flex-col items-center gap-5 sm:gap-6 md:gap-8 border-4 border-gray-700 shadow-2xl">
+        <div className="bg-gray-800 rounded-3xl p-8 sm:p-10 md:p-6 lg:p-8 flex flex-col items-center gap-8 sm:gap-10 md:gap-6 lg:gap-8 border-4 border-gray-700 shadow-2xl">
           {(['red', 'yellow', 'green'] as LightColor[]).map((color) => {
             const isActive = activeLight === color
             const cfg = lightConfig[color]
@@ -137,7 +137,7 @@ export default function Semaforo() {
                 key={color}
                 onClick={(e) => handleColorClick(color, e)}
                 className={`
-                  w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-40 lg:h-40 rounded-full transition-all duration-300 cursor-pointer
+                  w-40 h-40 sm:w-56 sm:h-56 md:w-48 md:h-48 lg:w-56 lg:h-56 rounded-full transition-all duration-300 cursor-pointer
                   border-2 border-gray-600
                   ${isActive ? `${cfg.bg} ${cfg.glow}` : cfg.off}
                   hover:scale-110 active:scale-95
@@ -152,7 +152,7 @@ export default function Semaforo() {
           <div
             className={`
               absolute top-1/2 -translate-y-1/2
-              ${direction === 'left' ? '-left-16 sm:-left-20 md:-left-28 lg:-left-32' : '-right-16 sm:-right-20 md:-right-28 lg:-right-32'}
+              ${direction === 'left' ? '-left-28 sm:-left-36 md:-left-28 lg:-left-32' : '-right-28 sm:-right-36 md:-right-28 lg:-right-32'}
               text-green-500 drop-shadow-[0_0_12px_rgba(34,197,94,0.9)]
               animate-bounce
             `}
@@ -164,7 +164,7 @@ export default function Semaforo() {
               strokeWidth="3"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="w-14 h-14 sm:w-16 sm:h-16 md:w-24 md:h-24 lg:w-28 lg:h-28"
+              className="w-20 h-20 sm:w-28 sm:h-28 md:w-20 md:h-20 lg:w-24 lg:h-24"
               style={{ transform: direction === 'left' ? 'rotate(180deg)' : 'rotate(0deg)' }}
             >
               <path d="M5 12h14M12 5l7 7-7 7" />

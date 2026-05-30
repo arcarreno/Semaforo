@@ -1,0 +1,192 @@
+import { useState, useEffect, useCallback, useRef } from 'react'
+
+type LightColor = 'red' | 'yellow' | 'green'
+type Direction = 'left' | 'right' | null
+
+const DURATION = 10000
+const ARROW_DURATION = 3000
+
+export default function Semaforo() {
+  const [activeLight, setActiveLight] = useState<LightColor>('red')
+  const [direction, setDirection] = useState<Direction>(null)
+  const [showArrow, setShowArrow] = useState(false)
+  const [waitingForInput, setWaitingForInput] = useState(true)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const arrowTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const clearTimers = useCallback(() => {
+    if (timerRef.current) clearTimeout(timerRef.current)
+    if (arrowTimerRef.current) clearTimeout(arrowTimerRef.current)
+    timerRef.current = null
+    arrowTimerRef.current = null
+  }, [])
+
+  const goToRed = useCallback(() => {
+    clearTimers()
+    setActiveLight('red')
+    setDirection(null)
+    setShowArrow(false)
+    setWaitingForInput(true)
+  }, [clearTimers])
+
+  const startGreenCycle = useCallback((dir: Direction) => {
+    clearTimers()
+    setActiveLight('green')
+    setDirection(dir)
+    setShowArrow(true)
+    setWaitingForInput(false)
+
+    arrowTimerRef.current = setTimeout(() => {
+      setShowArrow(false)
+    }, ARROW_DURATION)
+
+    timerRef.current = setTimeout(() => {
+      setActiveLight('yellow')
+      timerRef.current = setTimeout(() => {
+        goToRed()
+      }, DURATION)
+    }, DURATION)
+  }, [clearTimers, goToRed])
+
+  const startYellowCycle = useCallback(() => {
+    clearTimers()
+    setActiveLight('yellow')
+    setDirection(null)
+    setShowArrow(false)
+    setWaitingForInput(false)
+
+    timerRef.current = setTimeout(() => {
+      goToRed()
+    }, DURATION)
+  }, [clearTimers, goToRed])
+
+  useEffect(() => {
+    return () => clearTimers()
+  }, [clearTimers])
+
+  const handleScreenClick = useCallback((e: React.MouseEvent) => {
+    if (!waitingForInput) return
+
+    const half = e.clientX < window.innerWidth / 2 ? 'left' : 'right'
+    startGreenCycle(half)
+  }, [waitingForInput, startGreenCycle])
+
+  const handleColorClick = useCallback((color: LightColor, e: React.MouseEvent) => {
+    e.stopPropagation()
+    clearTimers()
+
+    if (color === 'red') {
+      goToRed()
+    } else if (color === 'green') {
+      setActiveLight('green')
+      setDirection(null)
+      setShowArrow(false)
+      setWaitingForInput(false)
+
+      timerRef.current = setTimeout(() => {
+        setActiveLight('yellow')
+        timerRef.current = setTimeout(() => {
+          goToRed()
+        }, DURATION)
+      }, DURATION)
+    } else {
+      startYellowCycle()
+    }
+  }, [clearTimers, goToRed, startYellowCycle])
+
+  const lightConfig: Record<LightColor, { bg: string; glow: string; off: string }> = {
+    red: {
+      bg: 'bg-red-600',
+      glow: 'shadow-[0_0_30px_10px_rgba(220,38,38,0.8)]',
+      off: 'bg-red-950',
+    },
+    yellow: {
+      bg: 'bg-yellow-400',
+      glow: 'shadow-[0_0_30px_10px_rgba(250,204,21,0.8)]',
+      off: 'bg-yellow-950',
+    },
+    green: {
+      bg: 'bg-green-500',
+      glow: 'shadow-[0_0_30px_10px_rgba(34,197,94,0.8)]',
+      off: 'bg-green-950',
+    },
+  }
+
+  return (
+    <div
+      className="w-full h-full flex flex-col items-center justify-center bg-white select-none"
+      onClick={handleScreenClick}
+    >
+      {waitingForInput && (
+        <p className="text-gray-400 text-lg mb-6 animate-pulse">
+          Toca la izquierda o derecha para elegir dirección
+        </p>
+      )}
+
+      <div className="relative">
+        <div className="bg-gray-800 rounded-3xl p-6 sm:p-8 flex flex-col items-center gap-5 sm:gap-6 border-4 border-gray-700 shadow-2xl">
+          {(['red', 'yellow', 'green'] as LightColor[]).map((color) => {
+            const isActive = activeLight === color
+            const cfg = lightConfig[color]
+            return (
+              <button
+                key={color}
+                onClick={(e) => handleColorClick(color, e)}
+                className={`
+                  w-20 h-20 sm:w-28 sm:h-28 rounded-full transition-all duration-300 cursor-pointer
+                  border-2 border-gray-600
+                  ${isActive ? `${cfg.bg} ${cfg.glow}` : cfg.off}
+                  hover:scale-110 active:scale-95
+                `}
+                aria-label={`Semáforo ${color}`}
+              />
+            )
+          })}
+        </div>
+
+        {showArrow && direction && (
+          <div
+            className={`
+              absolute top-1/2 -translate-y-1/2
+              ${direction === 'left' ? '-left-20 sm:-left-28' : '-right-20 sm:-right-28'}
+              text-green-500 drop-shadow-[0_0_15px_rgba(34,197,94,0.9)]
+              animate-bounce
+            `}
+          >
+            <svg
+              width="60"
+              height="60"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="w-14 h-14 sm:w-20 sm:h-20"
+              style={{ transform: direction === 'left' ? 'rotate(180deg)' : 'rotate(0deg)' }}
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </div>
+        )}
+      </div>
+
+      <div className="mt-8 text-gray-500 text-sm sm:text-base">
+        {waitingForInput && (
+          <span>Esperando dirección...</span>
+        )}
+        {activeLight === 'green' && (
+          <span className="text-green-400">
+            Verde {direction === 'left' ? '← Izquierda' : direction === 'right' ? 'Derecha →' : ''}
+          </span>
+        )}
+        {activeLight === 'yellow' && (
+          <span className="text-yellow-400">Amarillo — Precaución</span>
+        )}
+        {activeLight === 'red' && !waitingForInput && (
+          <span className="text-red-400">Rojo — Alto</span>
+        )}
+      </div>
+    </div>
+  )
+}

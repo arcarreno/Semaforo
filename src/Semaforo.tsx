@@ -153,22 +153,23 @@ export default function Semaforo() {
             className={`
               absolute top-1/2 -translate-y-1/2
               ${direction === 'left' ? '-left-28 sm:-left-36 md:-left-28 lg:-left-32' : '-right-28 sm:-right-36 md:-right-28 lg:-right-32'}
-              text-green-500 drop-shadow-[0_0_12px_rgba(34,197,94,0.9)]
-              animate-bounce
             `}
           >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="w-20 h-20 sm:w-28 sm:h-28 md:w-20 md:h-20 lg:w-24 lg:h-24"
-              style={{ transform: direction === 'left' ? 'rotate(180deg)' : 'rotate(0deg)' }}
-            >
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
+            {/* Circulo verde oscuro (diferente del verde de la luz principal) */}
+            <div className="w-20 h-20 sm:w-28 sm:h-28 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full bg-green-700 flex items-center justify-center shadow-[0_0_20px_8px_rgba(21,128,61,0.8)]">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="w-12 h-12 sm:w-16 sm:h-16 md:w-12 md:h-12 lg:w-14 lg:h-14"
+                style={{ transform: direction === 'left' ? 'rotate(180deg)' : 'rotate(0deg)' }}
+              >
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </div>
           </div>
         )}
       </div>

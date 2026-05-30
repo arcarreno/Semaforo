@@ -67,8 +67,12 @@ export default function Semaforo() {
   const handleScreenClick = useCallback((e: React.MouseEvent) => {
     if (!waitingForInput) return
 
-    const half = e.clientX < window.innerWidth / 2 ? 'left' : 'right'
-    startGreenCycle(half)
+    const w = window.innerWidth
+    const x = e.clientX
+    const third = w / 3
+
+    const dir: Direction = x < third ? 'left' : x > third * 2 ? 'right' : null
+    startGreenCycle(dir)
   }, [waitingForInput, startGreenCycle])
 
   const handleColorClick = useCallback((color: LightColor, e: React.MouseEvent) => {
@@ -119,7 +123,7 @@ export default function Semaforo() {
     >
       {waitingForInput && (
         <p className="text-gray-400 text-lg mb-6 animate-pulse">
-          Toca la izquierda o derecha para elegir dirección
+          Toca la izquierda, centro o derecha para elegir dirección
         </p>
       )}
 

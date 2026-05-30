@@ -1,31 +1,31 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 
 type LightColor = 'red' | 'yellow' | 'green'
 type Direction = 'left' | 'right' | null
 
 const DURATION = 10000
-const ARROW_DURATION = 3000
 
 export default function Semaforo() {
   const [activeLight, setActiveLight] = useState<LightColor>('red')
   const [direction, setDirection] = useState<Direction>(null)
-  const [showArrow, setShowArrow] = useState(false)
   const [waitingForInput, setWaitingForInput] = useState(true)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const arrowTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Flecha visible mientras el verde este activo y haya direccion
+  const showArrow = useMemo(
+    () => activeLight === 'green' && direction !== null,
+    [activeLight, direction]
+  )
 
   const clearTimers = useCallback(() => {
     if (timerRef.current) clearTimeout(timerRef.current)
-    if (arrowTimerRef.current) clearTimeout(arrowTimerRef.current)
     timerRef.current = null
-    arrowTimerRef.current = null
   }, [])
 
   const goToRed = useCallback(() => {
     clearTimers()
     setActiveLight('red')
     setDirection(null)
-    setShowArrow(false)
     setWaitingForInput(true)
   }, [clearTimers])
 
@@ -33,12 +33,7 @@ export default function Semaforo() {
     clearTimers()
     setActiveLight('green')
     setDirection(dir)
-    setShowArrow(true)
     setWaitingForInput(false)
-
-    arrowTimerRef.current = setTimeout(() => {
-      setShowArrow(false)
-    }, ARROW_DURATION)
 
     timerRef.current = setTimeout(() => {
       setActiveLight('yellow')

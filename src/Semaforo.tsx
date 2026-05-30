@@ -101,17 +101,17 @@ export default function Semaforo() {
   const lightConfig: Record<LightColor, { bg: string; glow: string; off: string }> = {
     red: {
       bg: 'bg-red-600',
-      glow: 'shadow-[0_0_30px_10px_rgba(220,38,38,0.8)]',
+      glow: 'shadow-[0_0_30px_12px_rgba(220,38,38,0.8)]',
       off: 'bg-red-950',
     },
     yellow: {
       bg: 'bg-yellow-400',
-      glow: 'shadow-[0_0_30px_10px_rgba(250,204,21,0.8)]',
+      glow: 'shadow-[0_0_30px_12px_rgba(250,204,21,0.8)]',
       off: 'bg-yellow-950',
     },
     green: {
       bg: 'bg-green-500',
-      glow: 'shadow-[0_0_30px_10px_rgba(34,197,94,0.8)]',
+      glow: 'shadow-[0_0_30px_12px_rgba(34,197,94,0.8)]',
       off: 'bg-green-950',
     },
   }
@@ -128,7 +128,7 @@ export default function Semaforo() {
       )}
 
       <div className="relative">
-        <div className="bg-gray-800 rounded-3xl p-6 sm:p-8 flex flex-col items-center gap-5 sm:gap-6 border-4 border-gray-700 shadow-2xl">
+        <div className="bg-gray-800 rounded-3xl p-5 sm:p-6 md:p-8 flex flex-col items-center gap-5 sm:gap-6 md:gap-8 border-4 border-gray-700 shadow-2xl">
           {(['red', 'yellow', 'green'] as LightColor[]).map((color) => {
             const isActive = activeLight === color
             const cfg = lightConfig[color]
@@ -137,7 +137,7 @@ export default function Semaforo() {
                 key={color}
                 onClick={(e) => handleColorClick(color, e)}
                 className={`
-                  w-20 h-20 sm:w-28 sm:h-28 rounded-full transition-all duration-300 cursor-pointer
+                  w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-40 lg:h-40 rounded-full transition-all duration-300 cursor-pointer
                   border-2 border-gray-600
                   ${isActive ? `${cfg.bg} ${cfg.glow}` : cfg.off}
                   hover:scale-110 active:scale-95
@@ -152,21 +152,19 @@ export default function Semaforo() {
           <div
             className={`
               absolute top-1/2 -translate-y-1/2
-              ${direction === 'left' ? '-left-20 sm:-left-28' : '-right-20 sm:-right-28'}
-              text-green-500 drop-shadow-[0_0_15px_rgba(34,197,94,0.9)]
+              ${direction === 'left' ? '-left-16 sm:-left-20 md:-left-28 lg:-left-32' : '-right-16 sm:-right-20 md:-right-28 lg:-right-32'}
+              text-green-500 drop-shadow-[0_0_12px_rgba(34,197,94,0.9)]
               animate-bounce
             `}
           >
             <svg
-              width="60"
-              height="60"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
               strokeWidth="3"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="w-14 h-14 sm:w-20 sm:h-20"
+              className="w-14 h-14 sm:w-16 sm:h-16 md:w-24 md:h-24 lg:w-28 lg:h-28"
               style={{ transform: direction === 'left' ? 'rotate(180deg)' : 'rotate(0deg)' }}
             >
               <path d="M5 12h14M12 5l7 7-7 7" />
